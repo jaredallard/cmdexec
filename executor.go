@@ -17,7 +17,6 @@ package cmdexec
 
 import (
 	"context"
-	"os/exec"
 	"sync"
 )
 
@@ -35,12 +34,6 @@ var (
 	executorRLock = new(sync.Mutex)
 	executorWLock = new(sync.Mutex)
 )
-
-// stdExecutor is the default executor used by cmdexec. It's a simple
-// wrapper around [exec.CommandContext] to return the Cmd interface.
-func stdExecutor(ctx context.Context, name string, arg ...string) Cmd {
-	return exec.CommandContext(ctx, name, arg...)
-}
 
 // executorFn is a function that returns a new Cmd based on the given
 // arguments.

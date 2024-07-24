@@ -24,7 +24,9 @@ package cmdexec
 
 import (
 	"context"
-	"testing"
+	"io"
+
+	"github.com/jaredallard/cmdexec/internal/mockt"
 )
 
 // Cmd is an interface to be used instead of [exec.Cmd] for mocking
@@ -32,6 +34,18 @@ import (
 type Cmd interface {
 	Output() ([]byte, error)
 	CombinedOutput() ([]byte, error)
+	Run() error
+
+	// Below are non-standard functions (no present in the [exec.Cmd])
+	// that are provided for convenience.
+	SetStdout(io.Writer)
+	SetStderr(io.Writer)
+	SetStdin(io.Reader)
+
+	// UseOSStreams sets Stdout, Stderr, and Stdin to the OS streams
+	// (os.Stdout, os.Stderr, and os.Stdin respectively). If stdin is
+	// false then Stdin is not set.
+	UseOSStreams(stdin bool)
 }
 
 // Command returns a new Cmd that will call the given command with the
@@ -73,10 +87,11 @@ func CommandContext(ctx context.Context, name string, arg ...string) Cmd {
 //
 //	    // Your test code here.
 //	}
-func UseMockExecutor(t *testing.T, mock *MockExecutor) {
+func UseMockExecutor(t mockt.T, mock *MockExecutor) {
 	// Prevent new mock executors from being used until this test has finished.
 	if !executorWLock.TryLock() {
 		t.Fatal("UseMockExecutor can only be called once per test")
+		return
 	}
 
 	// Lock the reader to prevent new commands from being created while we
