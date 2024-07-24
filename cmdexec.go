@@ -27,7 +27,7 @@ import (
 	"testing"
 )
 
-// Cmd is an interface to be used instead of [*exec.Cmd] for mocking
+// Cmd is an interface to be used instead of [exec.Cmd] for mocking
 // purposes.
 type Cmd interface {
 	Output() ([]byte, error)
@@ -50,32 +50,34 @@ func CommandContext(ctx context.Context, name string, arg ...string) Cmd {
 	return executor(ctx, name, arg...)
 }
 
-// UseMockExecutor replaces the executor used by exectest with a mock
+// UseMockExecutor replaces the executor used by cmdexec with a mock
 // executor that can be used to control the output of all commands
 // created after this function is called. A cleanup function is added
 // to the test to ensure that the original executor is restored after
 // the test has finished.
 //
-// Note: This function can only ever be called once per test. If it's
-// called again it will deadlock the test.
+// Note: This function can only ever be called once per test. If called
+// again in the same test, it will cause the test to fail.
 //
 // Usage:
 //
 //	func TestSomething(t *testing.T) {
-//	    mock := exectest.NewMockExecutor()
-//	    mock.AddCommand(&exectest.MockCommand{
+//	    mock := cmdexec.NewMockExecutor()
+//	    mock.AddCommand(&cmdexec.MockCommand{
 //	        Name:   "echo",
 //	        Args:   []string{"hello", "world"},
 //	        Stdout: []byte("hello world\n"),
 //	    })
 //
-//	    exectest.UseMockExecutor(t, mock)
+//	    cmdexec.UseMockExecutor(t, mock)
 //
 //	    // Your test code here.
 //	}
 func UseMockExecutor(t *testing.T, mock *MockExecutor) {
 	// Prevent new mock executors from being used until this test has finished.
-	executorWLock.Lock()
+	if !executorWLock.TryLock() {
+		t.Fatal("UseMockExecutor can only be called once per test")
+	}
 
 	// Lock the reader to prevent new commands from being created while we
 	// swap out the executor.

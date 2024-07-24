@@ -36,7 +36,7 @@ var (
 	executorWLock = new(sync.Mutex)
 )
 
-// stdExecutor is the default executor used by exectest. It's a simple
+// stdExecutor is the default executor used by cmdexec. It's a simple
 // wrapper around [exec.CommandContext] to return the Cmd interface.
 func stdExecutor(ctx context.Context, name string, arg ...string) Cmd {
 	return exec.CommandContext(ctx, name, arg...)
