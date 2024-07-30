@@ -3,8 +3,8 @@ modules:
     - name: github.com/rgst-io/stencil-golang
       url: https://github.com/rgst-io/stencil-golang
       version:
-        commit: bd265e16cf75c06e2569b6658735d38b025599e2
-        branch: main
+        commit: a717f8191f925ef160b33eae3799f519610eafff
+        tag: v0.6.1
 files:
     - name: .cliff.toml
       template: .cliff.toml.tpl
@@ -23,6 +23,9 @@ files:
       module: github.com/rgst-io/stencil-golang
     - name: .github/workflows/tests.yaml
       template: .github/workflows/tests.yaml.tpl
+      module: github.com/rgst-io/stencil-golang
+    - name: .gitignore
+      template: .gitignore.tpl
       module: github.com/rgst-io/stencil-golang
     - name: .goreleaser.yaml
       template: .goreleaser.yaml.tpl
@@ -47,4 +50,7 @@ files:
       module: github.com/rgst-io/stencil-golang
     - name: cmd/cmdexec/cmdexec.go
       template: cmd/$name/name.go.tpl
+      module: github.com/rgst-io/stencil-golang
+    - name: package.json
+      template: package.json.tpl
       module: github.com/rgst-io/stencil-golang

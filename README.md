@@ -22,8 +22,8 @@ drop-in support.
 ## Differences
 
 - Instead of setting `cmd.Stdin` (or `in/err`), use `SetStdin()`
-functions instead. This is due to those being fields on a struct,
-which cannot be on an interface.
+  functions instead. This is due to those being fields on a struct,
+  which cannot be on an interface.
 
 ## Usage
 
