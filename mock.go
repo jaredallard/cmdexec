@@ -21,6 +21,7 @@ import (
 	"encoding/base64"
 	"fmt"
 	"io"
+	"os/exec"
 	"strings"
 )
 
@@ -116,6 +117,28 @@ func (c *MockCommand) Run() error {
 
 	return c.Err
 }
+
+// String implements the [Cmd] interface, see [Cmd.String] for more
+// information.
+func (c *MockCommand) String() string {
+	// If possible to look up the command in the PATH, we should return
+	// the full path to the command. This is mostly to match the behavior
+	// of [exec.Cmd.String].
+	execPath := c.Name
+	if realPath, err := exec.LookPath(c.Name); err == nil {
+		execPath = realPath
+	}
+
+	return strings.Join(append([]string{execPath}, c.Args...), " ")
+}
+
+// SetEnviron implements the [Cmd] interface. For the MockCommand, this
+// is a no-op because we do not actually execute any commands.
+func (c *MockCommand) SetEnviron(_ []string) {}
+
+// SetDir implements the [Cmd] interface. For the MockCommand, this is a
+// no-op because we do not actually execute any commands.
+func (c *MockCommand) SetDir(_ string) {}
 
 // SetStdout implements the [Cmd] interface. For the MockCommand, this
 // is a no-op because we do not actually execute any commands.

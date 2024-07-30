@@ -32,12 +32,27 @@ import (
 // Cmd is an interface to be used instead of [exec.Cmd] for mocking
 // purposes.
 type Cmd interface {
+	// Output matches [exec.Cmd.Output].
 	Output() ([]byte, error)
+	// CombinedOutput matches [exec.Cmd.CombinedOutput].
 	CombinedOutput() ([]byte, error)
+	// Run matches [exec.Cmd.Run].
 	Run() error
+	// String returns the command line string that will be executed.
+	String() string
 
 	// Below are non-standard functions (no present in the [exec.Cmd])
 	// that are provided for convenience.
+
+	// SetEnviron sets the environment variables of the command. Matches
+	// the behavior of setting [exec.Cmd.Environ] directly.
+	SetEnviron([]string)
+
+	// SetDir sets the working directory of the command.
+	SetDir(string)
+
+	// SetStdout, SetStderr, and SetStdin set the stdout, stderr, and
+	// stdin of the command respectively.
 	SetStdout(io.Writer)
 	SetStderr(io.Writer)
 	SetStdin(io.Reader)

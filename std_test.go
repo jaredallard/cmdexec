@@ -17,16 +17,3 @@ func TestCanExecuteACommand(t *testing.T) {
 	assert.NilError(t, err)
 	assert.Equal(t, string(out), "hello\n")
 }
-
-func ExampleCmd_UseOSStreams() {
-	// This example demonstrates how to use the UseOSStreams function to
-	// set the stdin, stdout, and stderr of a command to the OS streams.
-	cmd := cmdexec.Command("echo", "hello")
-	cmd.UseOSStreams(false)
-	if err := cmd.Run(); err != nil {
-		panic(err)
-	}
-
-	// Output:
-	// hello
-}

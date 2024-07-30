@@ -3,6 +3,7 @@ package cmdexec_test
 import (
 	"bytes"
 	"fmt"
+	"os/exec"
 	"testing"
 
 	"github.com/jaredallard/cmdexec"
@@ -83,4 +84,17 @@ func TestPanicsIfCommandNotRegistered(t *testing.T) {
 
 	// run the command. This should panic.
 	cmdexec.Command("echo", "hello").Run()
+}
+
+// TestStringMatchesExecString ensures that the string representation
+// of a command matches that of the standard library's exec.Cmd.
+func TestStringMatchesExecString(t *testing.T) {
+	cmdexec.UseMockExecutor(t, cmdexec.NewMockExecutor(&cmdexec.MockCommand{
+		Name: "echo",
+		Args: []string{"hello", "world"},
+	}))
+
+	mockStr := cmdexec.Command("echo", "hello", "world").String()
+	stdStr := exec.Command("echo", "hello", "world").String()
+	assert.Equal(t, mockStr, stdStr)
 }

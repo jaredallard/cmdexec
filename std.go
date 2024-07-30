@@ -36,7 +36,22 @@ func stdExecutor(ctx context.Context, name string, arg ...string) Cmd {
 	return &stdExecutorCmd{exec.CommandContext(ctx, name, arg...)}
 }
 
-// Output implements [Cmd.Output].
+// String implements [Cmd.String].
+func (c *stdExecutorCmd) String() string {
+	return c.Cmd.String()
+}
+
+// SetEnviron implements [Cmd.SetEnviron].
+func (c *stdExecutorCmd) SetEnviron(env []string) {
+	c.Cmd.Env = env
+}
+
+// SetDir implements [Cmd.SetDir].
+func (c *stdExecutorCmd) SetDir(dir string) {
+	c.Cmd.Dir = dir
+}
+
+// SetStdout implements [Cmd.SetStdout].
 func (c *stdExecutorCmd) SetStdout(w io.Writer) {
 	c.Cmd.Stdout = w
 }
