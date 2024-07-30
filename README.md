@@ -42,4 +42,4 @@ is to allow greater testing if required.
 
 ## License
 
-GPL-3.0
+LGPL-3.0
