@@ -3,6 +3,7 @@ package cmdexec_test
 import (
 	"bytes"
 	"fmt"
+	"os"
 	"os/exec"
 	"testing"
 
@@ -97,4 +98,15 @@ func TestStringMatchesExecString(t *testing.T) {
 	mockStr := cmdexec.Command("echo", "hello", "world").String()
 	stdStr := exec.Command("echo", "hello", "world").String()
 	assert.Equal(t, mockStr, stdStr)
+}
+
+func TestMockUnusedDontPanic(_ *testing.T) {
+	cmd := &cmdexec.MockCommand{}
+
+	// These are all noops, so just ensure they don't panic.
+	cmd.SetEnviron(os.Environ())
+	cmd.SetDir("")
+	cmd.SetStderr(nil)
+	cmd.SetStdout(nil)
+	cmd.UseOSStreams(false)
 }

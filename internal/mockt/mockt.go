@@ -19,9 +19,6 @@ package mockt
 import "testing"
 
 type T interface {
-	// Fail marks the test as failed, see [testing.T.Fail].
-	Fail()
-
 	// Failed returns if the test has failed or not, see
 	// [testing.T.Failed].
 	Failed() bool
@@ -51,11 +48,6 @@ type t struct {
 //nolint:revive // Why: We're an internal package.
 func New() *t {
 	return &t{}
-}
-
-// Fail implements [T.Fail].
-func (t *t) Fail() {
-	t.failed = true
 }
 
 // Failed implements [T.Failed].
