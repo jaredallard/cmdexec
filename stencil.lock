@@ -1,10 +1,10 @@
-version: 0.7.0
+version: 0.8.0
 modules:
     - name: github.com/rgst-io/stencil-golang
       url: https://github.com/rgst-io/stencil-golang
       version:
-        commit: a717f8191f925ef160b33eae3799f519610eafff
-        tag: v0.6.1
+        commit: 54219116bf41ae06dfb223867a284531be49abaf
+        tag: v0.7.0
 files:
     - name: .cliff.toml
       template: .cliff.toml.tpl
@@ -36,6 +36,9 @@ files:
     - name: .mise/tasks/changelog-release
       template: .mise/tasks/changelog-release.tpl
       module: github.com/rgst-io/stencil-golang
+    - name: .vscode/common.code-snippets
+      template: .vscode/common.code-snippets.tpl
+      module: github.com/rgst-io/stencil-golang
     - name: .vscode/extensions.json
       template: .vscode/extensions.json.tpl
       module: github.com/rgst-io/stencil-golang
@@ -46,7 +49,7 @@ files:
       template: CONTRIBUTING.md.tpl
       module: github.com/rgst-io/stencil-golang
     - name: LICENSE
-      template: LICENSE_GPL-3.0.tpl
+      template: LICENSE.tpl
       module: github.com/rgst-io/stencil-golang
     - name: cmd/cmdexec/cmdexec.go
       template: cmd/$name/name.go.tpl
