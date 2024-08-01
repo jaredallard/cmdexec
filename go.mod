@@ -1,6 +1,6 @@
 module github.com/jaredallard/cmdexec
 
-go 1.22
+go 1.20
 
 require gotest.tools/v3 v3.5.1
 
