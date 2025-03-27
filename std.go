@@ -44,27 +44,27 @@ func (c *stdExecutorCmd) String() string {
 
 // SetEnviron implements [Cmd.SetEnviron].
 func (c *stdExecutorCmd) SetEnviron(env []string) {
-	c.Cmd.Env = env
+	c.Env = env
 }
 
 // SetDir implements [Cmd.SetDir].
 func (c *stdExecutorCmd) SetDir(dir string) {
-	c.Cmd.Dir = dir
+	c.Dir = dir
 }
 
 // SetStdout implements [Cmd.SetStdout].
 func (c *stdExecutorCmd) SetStdout(w io.Writer) {
-	c.Cmd.Stdout = w
+	c.Stdout = w
 }
 
 // SetStderr implements [Cmd.SetStderr].
 func (c *stdExecutorCmd) SetStderr(w io.Writer) {
-	c.Cmd.Stderr = w
+	c.Stderr = w
 }
 
 // SetStdin implements [Cmd.SetStdin].
 func (c *stdExecutorCmd) SetStdin(r io.Reader) {
-	c.Cmd.Stdin = r
+	c.Stdin = r
 }
 
 // UseOSStreams implements [Cmd.UseOSStreams].

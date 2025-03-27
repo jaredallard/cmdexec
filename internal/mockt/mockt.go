@@ -14,11 +14,12 @@
 // License along with this program. If not, see
 // <https://www.gnu.org/licenses/>.
 
-// mockt implements a system for mocking [testing.T].
+// Package mockt implements a system for mocking [testing.T].
 package mockt
 
 import "testing"
 
+// T is an interface for [testing.T]
 type T interface {
 	// Failed returns if the test has failed or not, see
 	// [testing.T.Failed].
