@@ -1,7 +1,7 @@
 module github.com/jaredallard/cmdexec
 
-go 1.20
+go 1.21
 
 require gotest.tools/v3 v3.5.2
 
-require github.com/google/go-cmp v0.5.9 // indirect
+require github.com/google/go-cmp v0.7.0 // indirect
