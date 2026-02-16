@@ -28,7 +28,7 @@ run = [
 	"gofmt -s -w .",
 	"goimports -w .",
 	"shfmt -w .",
-	"bun node_modules/.bin/prettier --write '**/*.{json,yaml,yml,md,jsonschema.json}'",
+	"bunx prettier --write '**/*.{json,yaml,yml,md,jsonschema.json}'",
 ]
 
 [tasks.lint]
