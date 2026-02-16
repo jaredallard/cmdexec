@@ -24,6 +24,27 @@ import (
 	"github.com/jaredallard/cmdexec/internal/mockt"
 )
 
+func ExampleUseMockExecutor() {
+	// In real tests, you'd be using [testing.T] instead of this.
+	t := mockt.New()
+	defer t.RunCleanup()
+
+	// Create the executor and use it.
+	cmdexec.UseMockExecutor(t, cmdexec.NewMockExecutor(&cmdexec.MockCommand{
+		Name:   "echo",
+		Args:   []string{"hello, world!"},
+		Stdout: []byte("hello, world!"),
+	}))
+
+	// Now all calls to `cmdexec.Command` use the MockExecutor.
+	b, _ := cmdexec.Command("echo", "hello, world!").Output()
+
+	fmt.Println(string(b))
+
+	// Output:
+	// hello, world!
+}
+
 func ExampleMockCommand_SetDir() {
 	// Specific example doesn't work on Windows, but the functionality
 	// does!
