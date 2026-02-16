@@ -24,7 +24,6 @@ import (
 	"encoding/base64"
 	"fmt"
 	"io"
-	"os/exec"
 	"strings"
 )
 
@@ -32,6 +31,16 @@ import (
 type MockExecutor struct {
 	// cmd contains the commands that the executor should mock.
 	cmds map[string]*MockCommand
+
+	// lookPaths contains the results that should be returned by
+	// LookPath for a given command name.
+	lookPaths map[string]*mockLookPathResult
+}
+
+// mockLookPathResult stores the result of a mocked LookPath call.
+type mockLookPathResult struct {
+	path string
+	err  error
 }
 
 // MockCommand is a command that can be executed by the MockExecutor.
@@ -124,15 +133,29 @@ func (c *MockCommand) Run() error {
 // String implements the [Cmd] interface, see [Cmd.String] for more
 // information.
 func (c *MockCommand) String() string {
-	// If possible to look up the command in the PATH, we should return
-	// the full path to the command. This is mostly to match the behavior
-	// of [exec.Cmd.String].
+	// If possible to look up the command, we should return the full
+	// path to the command.  This is mostly to match the behavior of
+	// [exec.Cmd.String].  Uses the package-level lookPath (which may
+	// be mocked), falling back to the raw name on any error or panic
+	// (e.g., unregistered mock LookPath).
 	execPath := c.Name
-	if realPath, err := exec.LookPath(c.Name); err == nil {
+	if realPath, err := tryLookPath(c.Name); err == nil {
 		execPath = realPath
 	}
 
 	return strings.Join(append([]string{execPath}, c.Args...), " ")
+}
+
+// tryLookPath calls the package-level lookPath, recovering from panics
+// (which the mock executor raises for unregistered names).  This allows
+// callers like [MockCommand.String] to fall back gracefully.
+func tryLookPath(file string) (path string, err error) {
+	defer func() {
+		if r := recover(); r != nil {
+			err = fmt.Errorf("lookPath panicked: %v", r)
+		}
+	}()
+	return lookPath(file)
 }
 
 // SetEnviron implements the [Cmd] interface. For the MockCommand, this
@@ -175,8 +198,10 @@ func (c *MockCommand) UseOSStreams(_ bool) {}
 // the expected input, this enables testing of commands that read from
 // stdin.
 func NewMockExecutor(cmds ...*MockCommand) *MockExecutor {
-	me := &MockExecutor{}
-	me.cmds = make(map[string]*MockCommand)
+	me := &MockExecutor{
+		cmds:      make(map[string]*MockCommand),
+		lookPaths: make(map[string]*mockLookPathResult),
+	}
 	for _, cmd := range cmds {
 		me.AddCommand(cmd)
 	}
@@ -195,6 +220,40 @@ func (e *MockExecutor) getCommandKey(name string, args ...string) string {
 // Note: This is not thread-safe.
 func (e *MockExecutor) AddCommand(cmd *MockCommand) {
 	e.cmds[e.getCommandKey(cmd.Name, cmd.Args...)] = cmd
+}
+
+// AddLookPath registers a successful [LookPath] result for the given
+// command name. If the name has already been registered, it will be
+// replaced.
+//
+// Note: This is not thread-safe.
+func (e *MockExecutor) AddLookPath(name, path string) {
+	e.lookPaths[name] = &mockLookPathResult{path: path}
+}
+
+// AddLookPathError registers a [LookPath] result that returns an error
+// for the given command name. This is useful for testing code that
+// handles missing binaries. If the name has already been registered, it
+// will be replaced.
+//
+// Note: This is not thread-safe.
+func (e *MockExecutor) AddLookPathError(name string, err error) {
+	e.lookPaths[name] = &mockLookPathResult{err: err}
+}
+
+// lookPath implements the [lookPathFn] type, returning the path for a
+// registered command name. If no result has been registered for the
+// given name, this function will panic.
+func (e *MockExecutor) lookPath(file string) (string, error) {
+	if result, ok := e.lookPaths[file]; ok {
+		return result.path, result.err
+	}
+
+	panic(
+		fmt.Errorf("cmdexec: no LookPath registered for %q "+
+			"missing call to MockExecutor.AddLookPath?", file,
+		),
+	)
 }
 
 // executor implements the [executorFn] type, returning a Cmd based on

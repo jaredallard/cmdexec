@@ -82,6 +82,16 @@ func CommandContext(ctx context.Context, name string, arg ...string) Cmd {
 	return executor(ctx, name, arg...)
 }
 
+// LookPath searches for an executable named file in the directories
+// named by the PATH environment variable. See [exec.LookPath] for more
+// information.
+func LookPath(file string) (string, error) {
+	executorRLock.Lock()
+	defer executorRLock.Unlock()
+
+	return lookPath(file)
+}
+
 // UseMockExecutor replaces the executor used by cmdexec with a mock
 // executor that can be used to control the output of all commands
 // created after this function is called. A cleanup function is added
@@ -116,7 +126,9 @@ func UseMockExecutor(t mockt.T, mock *MockExecutor) {
 	// swap out the executor.
 	executorRLock.Lock()
 	originalExecutor := executor
+	originalLookPath := lookPath
 	executor = mock.executor
+	lookPath = mock.lookPath
 	executorRLock.Unlock()
 
 	t.Cleanup(func() {
@@ -128,7 +140,8 @@ func UseMockExecutor(t mockt.T, mock *MockExecutor) {
 		defer executorRLock.Unlock()
 		defer executorWLock.Unlock()
 
-		// Restore the original executor.
+		// Restore the original executor and lookPath.
 		executor = originalExecutor
+		lookPath = originalLookPath
 	})
 }
