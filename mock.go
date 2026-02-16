@@ -32,7 +32,7 @@ type MockExecutor struct {
 
 	// lookPaths contains the results that should be returned by
 	// LookPath for a given command name.
-	lookPaths map[string]mockLookPathResult
+	lookPaths map[string]*mockLookPathResult
 }
 
 // mockLookPathResult stores the result of a mocked LookPath call.
@@ -198,7 +198,7 @@ func (c *MockCommand) UseOSStreams(_ bool) {}
 func NewMockExecutor(cmds ...*MockCommand) *MockExecutor {
 	me := &MockExecutor{
 		cmds:      make(map[string]*MockCommand),
-		lookPaths: make(map[string]mockLookPathResult),
+		lookPaths: make(map[string]*mockLookPathResult),
 	}
 	for _, cmd := range cmds {
 		me.AddCommand(cmd)
@@ -226,7 +226,7 @@ func (e *MockExecutor) AddCommand(cmd *MockCommand) {
 //
 // Note: This is not thread-safe.
 func (e *MockExecutor) AddLookPath(name, path string) {
-	e.lookPaths[name] = mockLookPathResult{path: path}
+	e.lookPaths[name] = &mockLookPathResult{path: path}
 }
 
 // AddLookPathError registers a [LookPath] result that returns an error
@@ -236,7 +236,7 @@ func (e *MockExecutor) AddLookPath(name, path string) {
 //
 // Note: This is not thread-safe.
 func (e *MockExecutor) AddLookPathError(name string, err error) {
-	e.lookPaths[name] = mockLookPathResult{err: err}
+	e.lookPaths[name] = &mockLookPathResult{err: err}
 }
 
 // lookPath implements the [lookPathFn] type, returning the path for a
