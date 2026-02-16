@@ -27,6 +27,19 @@ func Test_stdExecutorString(t *testing.T) {
 	assert.Equal(t, cmdexec.Command("echo", "hello").String(), execPath+" hello")
 }
 
+func TestLookPath(t *testing.T) {
+	// Should behave identically to exec.LookPath.
+	wantPath, wantErr := exec.LookPath("echo")
+	gotPath, gotErr := cmdexec.LookPath("echo")
+	assert.Equal(t, gotPath, wantPath)
+	assert.Equal(t, gotErr, wantErr)
+}
+
+func TestLookPathNotFound(t *testing.T) {
+	_, err := cmdexec.LookPath("this-command-definitely-does-not-exist-anywhere")
+	assert.Assert(t, err != nil, "expected an error for a nonexistent command")
+}
+
 func Test_stdExecutorSetEnviron(t *testing.T) {
 	cmd := cmdexec.Command("printenv", "STENCIL_TEST_ENV")
 	cmd.SetEnviron([]string{"STENCIL_TEST_ENV=1"})

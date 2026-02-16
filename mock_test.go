@@ -90,14 +90,31 @@ func TestPanicsIfCommandNotRegistered(t *testing.T) {
 // TestStringMatchesExecString ensures that the string representation
 // of a command matches that of the standard library's exec.Cmd.
 func TestStringMatchesExecString(t *testing.T) {
-	cmdexec.UseMockExecutor(t, cmdexec.NewMockExecutor(&cmdexec.MockCommand{
+	echoPath, err := exec.LookPath("echo")
+	assert.NilError(t, err)
+
+	mock := cmdexec.NewMockExecutor(&cmdexec.MockCommand{
 		Name: "echo",
 		Args: []string{"hello", "world"},
-	}))
+	})
+	mock.AddLookPath("echo", echoPath)
+	cmdexec.UseMockExecutor(t, mock)
 
 	mockStr := cmdexec.Command("echo", "hello", "world").String()
 	stdStr := exec.Command("echo", "hello", "world").String()
 	assert.Equal(t, mockStr, stdStr)
+}
+
+// TestStringFallsBackWithoutLookPath ensures that String() gracefully
+// falls back to the raw command name when no LookPath is registered.
+func TestStringFallsBackWithoutLookPath(t *testing.T) {
+	cmdexec.UseMockExecutor(t, cmdexec.NewMockExecutor(&cmdexec.MockCommand{
+		Name: "mycmd",
+		Args: []string{"arg1"},
+	}))
+
+	str := cmdexec.Command("mycmd", "arg1").String()
+	assert.Equal(t, str, "mycmd arg1")
 }
 
 func TestMockUnusedDontPanic(_ *testing.T) {
@@ -109,4 +126,45 @@ func TestMockUnusedDontPanic(_ *testing.T) {
 	cmd.SetStderr(nil)
 	cmd.SetStdout(nil)
 	cmd.UseOSStreams(false)
+}
+
+// TestCanMockLookPath ensures that a registered LookPath returns the
+// expected path.
+func TestCanMockLookPath(t *testing.T) {
+	mock := cmdexec.NewMockExecutor()
+	mock.AddLookPath("git", "/usr/bin/git")
+	cmdexec.UseMockExecutor(t, mock)
+
+	path, err := cmdexec.LookPath("git")
+	assert.NilError(t, err)
+	assert.Equal(t, path, "/usr/bin/git")
+}
+
+// TestCanMockLookPathError ensures that a registered LookPath error is
+// returned correctly.
+func TestCanMockLookPathError(t *testing.T) {
+	mock := cmdexec.NewMockExecutor()
+	mock.AddLookPathError("nonexistent", exec.ErrNotFound)
+	cmdexec.UseMockExecutor(t, mock)
+
+	_, err := cmdexec.LookPath("nonexistent")
+	assert.ErrorIs(t, err, exec.ErrNotFound)
+}
+
+// TestPanicsIfLookPathNotRegistered ensures that if we try to look up
+// a command that hasn't been registered, a panic is raised.
+func TestPanicsIfLookPathNotRegistered(t *testing.T) {
+	defer func() {
+		r := recover()
+		assert.Assert(t, r != nil, "expected a panic to be raised")
+		assert.Error(t,
+			r.(error),
+			`cmdexec: no LookPath registered for "unknown" missing call to MockExecutor.AddLookPath?`,
+		)
+	}()
+
+	cmdexec.UseMockExecutor(t, cmdexec.NewMockExecutor())
+
+	// This should panic.
+	cmdexec.LookPath("unknown")
 }
