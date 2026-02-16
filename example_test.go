@@ -17,9 +17,11 @@ package cmdexec_test
 
 import (
 	"fmt"
+	"os/exec"
 	"runtime"
 
 	"github.com/jaredallard/cmdexec"
+	"github.com/jaredallard/cmdexec/internal/mockt"
 )
 
 func ExampleMockCommand_SetDir() {
@@ -54,4 +56,36 @@ func ExampleMockCommand_UseOSStreams() {
 
 	// Output:
 	// hello
+}
+
+func ExampleMockExecutor_AddLookPath() {
+	// In real tests, you'd be using [testing.T] instead of this.
+	t := mockt.New()
+	defer t.RunCleanup()
+
+	mock := cmdexec.NewMockExecutor()
+	mock.AddLookPath("git", "/not/a/real/git")
+	cmdexec.UseMockExecutor(t, mock)
+
+	path, _ := cmdexec.LookPath("git")
+	fmt.Println(path)
+
+	// Output:
+	// /not/a/real/git
+}
+
+func ExampleMockExecutor_AddLookPathError() {
+	// In real tests, you'd be using [testing.T] instead of this.
+	t := mockt.New()
+	defer t.RunCleanup()
+
+	mock := cmdexec.NewMockExecutor()
+	mock.AddLookPathError("nonexistent", exec.ErrNotFound)
+	cmdexec.UseMockExecutor(t, mock)
+
+	_, err := cmdexec.LookPath("nonexistent")
+	fmt.Println(err.Error())
+
+	// Output:
+	// executable file not found in $PATH
 }
