@@ -22,7 +22,7 @@ import (
 	"github.com/jaredallard/cmdexec"
 )
 
-func ExampleCmd_SetDir() {
+func ExampleMockCommand_SetDir() {
 	// Specific example doesn't work on Windows, but the functionality
 	// does!
 	if runtime.GOOS == "windows" {
@@ -43,7 +43,7 @@ func ExampleCmd_SetDir() {
 	// /tmp
 }
 
-func ExampleCmd_UseOSStreams() {
+func ExampleMockCommand_UseOSStreams() {
 	// This example demonstrates how to use the UseOSStreams function to
 	// set the stdin, stdout, and stderr of a command to the OS streams.
 	cmd := cmdexec.Command("echo", "hello")
