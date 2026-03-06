@@ -36,6 +36,7 @@ type stdExecutorCmd struct {
 // stdExecutor creates a new [Cmd] using [exec.CommandContext] as the
 // underlying executor.
 func stdExecutor(ctx context.Context, name string, arg ...string) Cmd {
+	//nolint:gosec // Why: acceptable
 	return &stdExecutorCmd{exec.CommandContext(ctx, name, arg...)}
 }
 
