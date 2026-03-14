@@ -20,8 +20,8 @@ import (
 	"os/exec"
 	"runtime"
 
-	"github.com/jaredallard/cmdexec"
-	"github.com/jaredallard/cmdexec/internal/mockt"
+	"go.rgst.io/jaredallard/cmdexec/v2"
+	"go.rgst.io/jaredallard/cmdexec/v2/internal/mockt"
 )
 
 func ExampleUseMockExecutor() {

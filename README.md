@@ -1,20 +1,5 @@
 # cmdexec
 
-<a href="https://github.com/jaredallard/cmdexec/releases">
-	<img alt="Latest Version" src="https://img.shields.io/github/v/release/jaredallard/cmdexec?style=for-the-badge">
-</a>
-<a href="https://github.com/jaredallard/cmdexec/blob/main/LICENSE">
-	<img alt="License" src="https://img.shields.io/github/license/jaredallard/cmdexec?style=for-the-badge">
-</a>
-<a href="https://github.com/jaredallard/cmdexec/actions/workflows/tests.yaml">
-	<img alt="GitHub Workflow Status" src="https://img.shields.io/github/actions/workflow/status/jaredallard/cmdexec/tests.yaml?style=for-the-badge">
-</a>
-<a href="https://app.codecov.io/gh/jaredallard/cmdexec">
-	<img alt="Codecov" src="https://img.shields.io/codecov/c/github/jaredallard/cmdexec?style=for-the-badge">
-</a>
-
-<br />
-
 Go library for mocking `exec.Command` and `exec.CommandContext` calls.
 Aims to provide an as close as possible [exec.Cmd]-like interface for
 drop-in support.
@@ -27,7 +12,7 @@ drop-in support.
 
 ## Usage
 
-See our [Go docs](https://pkg.go.dev/github.com/jaredallard/cmdexec).
+See our [Go docs](https://pkg.go.dev/go.rgst.io/jaredallard/cmdexec/v2).
 
 ### Asserting Output
 

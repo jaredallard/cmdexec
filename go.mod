@@ -1,4 +1,4 @@
-module github.com/jaredallard/cmdexec
+module go.rgst.io/jaredallard/cmdexec/v2
 
 go 1.21
 

@@ -6,7 +6,7 @@ import (
 	"os/exec"
 	"testing"
 
-	"github.com/jaredallard/cmdexec"
+	"go.rgst.io/jaredallard/cmdexec/v2"
 	"gotest.tools/v3/assert"
 )
 

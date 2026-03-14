@@ -3,8 +3,8 @@ package cmdexec_test
 import (
 	"testing"
 
-	"github.com/jaredallard/cmdexec"
-	"github.com/jaredallard/cmdexec/internal/mockt"
+	"go.rgst.io/jaredallard/cmdexec/v2"
+	"go.rgst.io/jaredallard/cmdexec/v2/internal/mockt"
 	"gotest.tools/v3/assert"
 )
 

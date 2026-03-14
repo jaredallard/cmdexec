@@ -29,7 +29,7 @@ import (
 	"context"
 	"io"
 
-	"github.com/jaredallard/cmdexec/internal/mockt"
+	"go.rgst.io/jaredallard/cmdexec/v2/internal/mockt"
 )
 
 // Cmd is an interface to be used instead of [exec.Cmd] for mocking
