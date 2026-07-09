@@ -27,4 +27,4 @@ is to allow greater testing if required.
 
 ## License
 
-LGPL-3.0
+MPL-2.0

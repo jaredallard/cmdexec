@@ -1,9 +1,9 @@
 name: cmdexec
 arguments:
   library: true
-  license: LGPL-3.0
+  license: MPL-2.0
   org: jaredallard
   vcs: forgejo
   vcs_host: git.rgst.io
 modules:
-  - name: github.com/rgst-io/stencil-golang
+  - name: go.rgst.io/rgst-io/stencil-golang

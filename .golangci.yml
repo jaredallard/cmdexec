@@ -18,25 +18,18 @@ linters:
         - style
     goheader:
       template: |-
-        Copyright (C) {{ YEAR }} cmdexec contributors
+        Copyright (C) {{ MOD_YEAR }} cmdexec contributors
 
-        This program is free software: you can redistribute it and/or modify
-        it under the terms of the GNU Lesser General Public License as
-        published by the Free Software Foundation, either version 3 of the
-        License, or (at your option) any later version.
+        This Source Code Form is subject to the terms of the Mozilla Public
+        License, v. 2.0. If a copy of the MPL was not distributed with this
+        file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-        This program is distributed in the hope that it will be useful,
-        but WITHOUT ANY WARRANTY; without even the implied warranty of
-        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-        GNU Lesser General Public License for more details.
-
-        You should have received a copy of the GNU Lesser General Public
-        License along with this program. If not, see
-        <https://www.gnu.org/licenses/>.
-
-        SPDX-License-Identifier: LGPL-3.0
+        SPDX-License-Identifier: MPL-2.0
     lll:
       line-length: 140
+  ## <<Stencil::Block(customLinterSettings)>>
+
+  ## <</Stencil::Block>>
 
   # Inverted configuration with enable-all and disable is not scalable
   # during updates of golangci-lint.
@@ -60,10 +53,14 @@ linters:
     - nakedret
     - staticcheck
     - revive
+    - usetesting
     - unconvert
     - unparam
     - unused
     - whitespace
+  ## <<Stencil::Block(customLinters)>>
+
+  ## <</Stencil::Block>>
 
   # Excluding configuration per-path, per-linter, per-text and per-source
   exclusions:
@@ -83,6 +80,14 @@ linters:
           - gocyclo
           - goheader # Don't require license headers in test files.
           - gosec
+      # Checking return of Close() is optional.
+      - path: '(.+)\.go$'
+        text: 'Error return value of `(.*\.Close|fmt\.F.*)` is not checked'
+      - path: '(.+)\.go$'
+        text: "G104: Errors unhandled" # Duplicates errcheck.
+## <<Stencil::Block(customExclusions)>>
+
+## <</Stencil::Block>>
 
 # formatter settings
 formatters:
